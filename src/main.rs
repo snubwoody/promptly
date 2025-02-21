@@ -3,9 +3,28 @@ use std::{
 	io::{BufWriter, Write}, 
 };
 
+use crossterm::event::{self, KeyCode};
+
 
 
 fn main() {
+	let mut terminal = ratatui::init();
+	loop{
+		terminal.draw(|frame|frame.render_widget("Hello world", frame.area())).unwrap();
+		match event::read().unwrap(){
+			event::Event::Key(key) =>{
+				match key.code {
+					KeyCode::Char('q') => break,
+					_ => {}
+				}
+			},
+			_ => {}
+		}
+	}
+	ratatui::restore();
+}	
+
+fn write_file(){
 	let file = OpenOptions::new()
 		.write(true)
 		.truncate(true)
@@ -16,7 +35,7 @@ fn main() {
 	
 	writer.write_all(&time_prompt()).unwrap();
 	writer.write_all(&path_prompt()).unwrap();
-	writer.write_all("$env.PROMPT_COMMAND = {||$\"~\\..\\(path)\n>\" }".as_bytes()).unwrap();
+	writer.write_all("\n$env.PROMPT_COMMAND = {||$\"~\\\\..\\\\(path)\\n>\" }".as_bytes()).unwrap();
 }
 
 fn time_prompt() -> Vec<u8>{
