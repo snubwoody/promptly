@@ -8,21 +8,40 @@ use crossterm::event::{self, KeyCode};
 
 
 fn main() {
-	let mut terminal = ratatui::init();
-	loop{
-		terminal.draw(|frame|frame.render_widget("Hello world", frame.area())).unwrap();
-		match event::read().unwrap(){
-			event::Event::Key(key) =>{
-				match key.code {
-					KeyCode::Char('q') => break,
-					_ => {}
-				}
-			},
-			_ => {}
+	let app = App::new();
+
+	app.run()
+}	
+
+#[derive(Debug,Default)]
+struct App{
+	exit: bool
+}
+
+impl App{
+	pub fn new() -> Self{
+		Self{
+			exit: false
 		}
 	}
-	ratatui::restore();
-}	
+
+	pub fn run(&self){
+		let mut terminal = ratatui::init();
+		loop{
+			terminal.draw(|frame|frame.render_widget("Hello world", frame.area())).unwrap();
+			match event::read().unwrap(){
+				event::Event::Key(key) =>{
+					match key.code {
+						KeyCode::Char('q') => break,
+						_ => {}
+					}
+				},
+				_ => {}
+			}
+		}
+		ratatui::restore();
+	}
+}
 
 fn write_file(){
 	let file = OpenOptions::new()
