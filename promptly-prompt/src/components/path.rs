@@ -1,7 +1,5 @@
 use std::path::PathBuf;
 
-use super::Component;
-
 /// Component for getting the current path
 pub struct PathComponent{
 
@@ -13,7 +11,7 @@ impl PathComponent {
 	}
 
 	/// Get and format the current directory
-	fn current_dir(&self) -> String{
+	pub fn current_dir(&self) -> String{
 		let current_dir = std::env::current_dir().unwrap();
 	
 		let mut path_string = String::new();
@@ -39,11 +37,5 @@ impl PathComponent {
 		}
 
 		path_string
-	}
-}
-
-impl Component for PathComponent {
-	fn output(&self) -> String {
-		self.current_dir()
 	}
 }

@@ -1,8 +1,6 @@
 use chrono::Local;
-use super::Component;
 
 // DateTime specifiers 
-
 /// The full gregorian year e.g. `2024`
 pub const FULL_YEAR_NUMBER:&str = "%Y";
 /// The last two digits of the gregorian year e.g `24`
@@ -16,7 +14,7 @@ pub const FULL_MONTH_NAME:&str = "%B";
 /// The day number (01-31) 
 pub const DAY_NUMBER:&str = "%d";
 /// The abbreviated week day name, always three letters e.g. `Mon` 
-pub const ABBR_DAY_NAME:&str = "%a";
+pub const ABRV_DAY_NAME:&str = "%a";
 /// The full week day name e.g. `Monday` 
 pub const FULL_DAY_NAME:&str = "%A";
 /// The hour number on 24-hour clocks(00-23) 
@@ -41,6 +39,7 @@ pub struct DateTimeFormat{
 	year_specifier:Option<String>,
 	month_specifier:Option<String>,
 	day_specifier:Option<String>,
+	include_am: bool
 }
 
 impl DateTimeFormat{
@@ -48,7 +47,51 @@ impl DateTimeFormat{
 		Self::default()
 	}
 
+	/// Set the seperator between the time component e.g. `12:01:01`
+	pub fn time_seperator(mut self,seperator:&str) -> Self{
+		self.time_seperator = Some(String::from(seperator));
+		self
+	}
+
+	/// Display the minute number `0-59`
+	pub fn minutes(mut self) -> Self{
+		self.minute_specifier = Some(String::from(MINUTE_NUMBER));
+		self
+	}
+
+	/// Display the second number `0-60`
+	pub fn seconds(mut self) -> Self{
+		self.second_specifier = Some(String::from(SECOND_NUMBER));
+		self
+	}
+
+	/// Display the hour number as would appear on a 12-hour clock
+	pub fn hours_12(mut self) -> Self{
+		self.hour_specifier = Some(String::from(HOUR_NUMBER_12));
+		self
+	}
+
+	/// Display the hour number as would appear on a 24-hour clock
+	pub fn hours_24(mut self) -> Self{
+		self.hour_specifier = Some(String::from(HOUR_NUMBER_24));
+		self
+	}
+
+	/// Display the full month name e.g `November`
 	pub fn full_month(mut self) -> Self{
+		self.month_specifier = Some(String::from(FULL_MONTH_NAME));
+		self
+	}
+	
+	/// Display the abbreviated month name e.g `Jul`
+	pub fn abrv_month(mut self) -> Self{
+		self.month_specifier = Some(String::from(ABRV_MONTH_NAME));
+		self
+	}
+	
+	/// Display the month number e.g `02`
+	pub fn month_number(mut self) -> Self{
+		self.month_specifier = Some(String::from(MONTH_NUMBER));
 		self
 	}
 
@@ -59,45 +102,86 @@ impl DateTimeFormat{
 	}
 	
 	/// Display the abbreviated gregorian year e.g. `24`
-	pub fn abbreviated_year(mut self) -> Self{
+	pub fn abrv_year(mut self) -> Self{
 		self.year_specifier = Some(String::from(POST_YEAR_NUMBER));
 		self
 	}
 }
 
+#[derive(Debug,Clone, Copy,Default)]
 pub struct TimeComponent;
 
 impl TimeComponent {
 	pub fn new() -> Self{
-		Self
+		Self::default()
+	}
+
+	fn format_time(&self,format:&DateTimeFormat) -> String{
+		let mut format_string = String::new();
+
+		format_string += &format.hour_specifier.clone().unwrap_or_default();
+		format_string += &format.time_seperator.clone().unwrap_or_default();
+		format_string += &format.minute_specifier.clone().unwrap_or_default();
+		format_string += &format.time_seperator.clone().unwrap_or_default();
+		format_string += &format.second_specifier.clone().unwrap_or_default();
+
+		format_string
+	}
+
+	fn format_date(&self,format:&DateTimeFormat) -> String{
+		todo!()
 	}
 
 	/// Get a string containing the current system time 
-	fn now(&self) -> String{
-		let now = Local::now();
-		
-		now.format("%H:%M:%S").to_string()
-	}
-}
+	pub fn now(&self,format:DateTimeFormat) -> String{
 
-impl Component for TimeComponent {
-	fn output(&self) -> String {
-		self.now()
+		let mut output_format = String::new();
+
+		let now = Local::now();
+
+		let time = self.format_time(&format);
+		output_format.push_str(&time);
+
+		now.format(&output_format).to_string()
 	}
 }
 
 #[cfg(test)]
 mod tests{
-    use crate::components::time::{FULL_YEAR_NUMBER, POST_YEAR_NUMBER};
+    use super::*;
 
-    use super::DateTimeFormat;
+	#[test]
+	fn time(){
+		let format = DateTimeFormat::new()
+			.hours_12()
+			.minutes()
+			.seconds()
+			.time_seperator("-");
+
+		let time = TimeComponent::new();
+
+		let time_format = time.format_time(&format);
+
+		assert_eq!(time_format,String::from("%I-%M-%S"))
+	}
 
 	#[test]
 	fn year_specifier(){
 		let full_year = DateTimeFormat::new().full_year();
-		let abrv_year = DateTimeFormat::new().abbreviated_year();
+		let abrv_year = DateTimeFormat::new().abrv_year();
 		
 		assert_eq!(full_year.year_specifier,Some(String::from(FULL_YEAR_NUMBER)));
 		assert_eq!(abrv_year.year_specifier,Some(String::from(POST_YEAR_NUMBER)));
+	}
+	
+	#[test]
+	fn month_specifier(){
+		let full_month = DateTimeFormat::new().full_month();
+		let abrv_month = DateTimeFormat::new().abrv_month();
+		let month_number = DateTimeFormat::new().month_number();
+		
+		assert_eq!(full_month.month_specifier,Some(String::from(FULL_MONTH_NAME)));
+		assert_eq!(abrv_month.month_specifier,Some(String::from(ABRV_MONTH_NAME)));
+		assert_eq!(month_number.month_specifier,Some(String::from(MONTH_NUMBER)));
 	}
 }
