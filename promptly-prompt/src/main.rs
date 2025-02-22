@@ -10,10 +10,12 @@ fn main() {
 	let time_component = TimeComponent::new();
 
 	let now = time_component.output();
+	
 
 	let prompt_indicator = ">";
 
 	prompt_string += &path_string;
+	prompt_string += &format!(" | {now}");
 	prompt_string += &format!("\n{prompt_indicator}");
 
 	let current = std::time::SystemTime::now();
