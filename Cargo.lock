@@ -324,6 +324,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "prompt"
+version = "0.1.0"
+
+[[package]]
 name = "promptly"
 version = "0.1.0"
 dependencies = [

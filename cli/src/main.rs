@@ -5,8 +5,6 @@ use std::{
 
 use crossterm::event::{self, KeyCode};
 
-
-
 fn main() {
 	let app = App::new();
 
