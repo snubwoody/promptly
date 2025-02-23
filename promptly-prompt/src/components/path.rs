@@ -30,7 +30,6 @@ impl PathComponent {
 	
 			path_string.push_str("~\\..\\");
 			path_string.push_str(path.to_str().unwrap());
-			dbg!(path);
 		
 		}else {
 			path_string.push_str(current_dir.to_str().unwrap());

@@ -1,5 +1,6 @@
 mod components;
 use components::{DateTimeFormat, PathComponent, TimeComponent};
+use colored::Colorize;
 
 fn main() {
 	let mut prompt_string = String::new();
@@ -23,6 +24,7 @@ fn main() {
 	prompt_string += &format!(" | {now}");
 	prompt_string += &format!("\n{prompt_indicator}");
 
-	println!("{prompt_string}");
+	println!("{}","Hello world".on_blue());
+	println!("{}",prompt_string.blue());
 }
 
