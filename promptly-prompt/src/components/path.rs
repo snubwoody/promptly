@@ -28,7 +28,7 @@ impl PathComponent {
 			path.push(second_last);
 			path.push(last);
 	
-			path_string.push_str("~\\..\\");
+			path_string.push_str("\\..\\");
 			path_string.push_str(path.to_str().unwrap());
 		
 		}else {

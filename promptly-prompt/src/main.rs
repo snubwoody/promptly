@@ -1,8 +1,9 @@
 mod components;
+use ansi_term::Colour::{*};
 use components::{DateTimeFormat, PathComponent, TimeComponent};
-use colored::Colorize;
 
 fn main() {
+	let _ = ansi_term::enable_ansi_support();
 	let mut prompt_string = String::new();
 
 	let path_component = PathComponent::new();
@@ -24,7 +25,6 @@ fn main() {
 	prompt_string += &format!(" | {now}");
 	prompt_string += &format!("\n{prompt_indicator}");
 
-	println!("{}","Hello world".on_blue());
-	println!("{}",prompt_string.blue());
+	println!("{} ",RGB(255, 255, 255).paint(prompt_string));
 }
 

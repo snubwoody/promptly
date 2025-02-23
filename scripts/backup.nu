@@ -56,27 +56,8 @@ let catpuccin_latte_dark = {
 	shape_variable: $pink
 }
 
-let config_explore = {
-	status_bar_background: $pink
-	command_bar_text: $pink
-	highlight: $pink
-	selected_cell: $pink
-}
-
-$env.config = {
-	show_banner: false
-	color_config: $catpuccin_latte_dark
-	explore: $config_explore
-}
-
-def time [] {
-	date now | format date "%H:%M:%S"
-}
-
-def path [] {
-	# Get only the two most down paths
-	$env.PWD | path split | last 2 | path join
-}
+$env.config.color_config = $catpuccin_latte_dark 
+$env.config.show_banner = false
 
 $env.PROMPT_COMMAND = {||$"~\\..\\(path)\n>" }
 $env.PROMPT_COMMAND_RIGHT = {|| time}
@@ -85,3 +66,6 @@ $env.PROMPT_COMMAND_RIGHT = {|| time}
 $env.PROMPT_INDICATOR = ""
 
 $env.LS_COLORS = "di=0;34:*.exe=1;1;1"
+
+# Set editor
+$env.config.buffer_editor = "code"
